@@ -192,7 +192,78 @@ Após a instalação, será solicitado:
 - **Nome de usuário:** (escolha um nome)
 - **Senha:** (digite uma senha - não aparecerá na tela)
 
-### ⚠️ Problema 6: Distribuição não inicia após instalação
+### Passo 7: Configurar Sudo sem Senha (Opcional mas Recomendado)
+
+Para facilitar o uso do WSL, você pode configurar o sudo para não pedir senha. Isso é especialmente útil durante instalações e desenvolvimento.
+
+**⚠️ Aviso de Segurança:** Esta configuração remove a necessidade de senha para comandos sudo. Use apenas em ambientes de desenvolvimento pessoal.
+
+Dentro do WSL, execute:
+
+```bash
+# Fazer backup do arquivo sudoers
+sudo cp /etc/sudoers /etc/sudoers.backup
+
+# Editar o arquivo sudoers
+sudo visudo
+```
+
+No editor, encontre a linha:
+```
+%sudo   ALL=(ALL:ALL) ALL
+```
+
+E substitua por:
+```
+%sudo   ALL=(ALL:ALL) NOPASSWD: ALL
+```
+
+**Como usar o visudo:**
+1. Pressione `i` para entrar no modo de inserção (se usar nano, já estará no modo de inserção)
+2. Faça a alteração
+3. Se estiver usando `vi`/`vim`: Pressione `Esc`, depois digite `:wq` e pressione Enter
+4. Se estiver usando `nano`: Pressione `Ctrl+X`, depois `Y` para confirmar, depois Enter
+
+**Alternativa mais simples (edição direta):**
+
+Se preferir, você pode editar diretamente:
+
+```bash
+# Adicionar configuração sem senha para seu usuário
+echo "$USER ALL=(ALL) NOPASSWD: ALL" | sudo tee /etc/sudoers.d/$USER
+```
+
+**Verificar se funcionou:**
+
+Feche e reabra o terminal WSL, depois teste:
+
+```bash
+sudo whoami
+```
+
+Se retornar `root` sem pedir senha, a configuração está funcionando!
+
+### ⚠️ Problema: Erro ao editar sudoers
+
+**Erro:**
+```
+sudo: parse error in /etc/sudoers
+```
+
+**Causa:** Erro de sintaxe no arquivo sudoers.
+
+**Solução:**
+```bash
+# Restaurar backup
+sudo cp /etc/sudoers.backup /etc/sudoers
+
+# Tentar novamente com cuidado
+sudo visudo
+```
+
+**Dica:** Sempre use `visudo` para editar o arquivo sudoers, pois ele valida a sintaxe antes de salvar.
+
+### ⚠️ Problema 7: Distribuição não inicia após instalação
 
 **Erro:**
 ```
@@ -243,7 +314,7 @@ wsl --set-version Ubuntu 2
 
 **Nota:** A conversão pode levar alguns minutos.
 
-### ⚠️ Problema 7: Erro ao converter para WSL 2
+### ⚠️ Problema 8: Erro ao converter para WSL 2
 
 **Erro:**
 ```
@@ -271,7 +342,7 @@ Erro: 0x80370102
 
 ## 🛠️ Solução de Problemas Adicionais
 
-### Problema 8: WSL não aparece no menu Iniciar
+### Problema 9: WSL não aparece no menu Iniciar
 
 **Solução:**
 1. Execute manualmente:
@@ -283,7 +354,7 @@ Erro: 0x80370102
    wt
    ```
 
-### Problema 9: Erro de permissões ao acessar arquivos do Windows
+### Problema 10: Erro de permissões ao acessar arquivos do Windows
 
 **Causa:** Problemas com montagem de unidades do Windows.
 
@@ -291,7 +362,7 @@ Erro: 0x80370102
 - Acesse arquivos do Windows via `/mnt/c/`, `/mnt/d/`, etc.
 - Evite editar arquivos do Windows diretamente do WSL (use cópias)
 
-### Problema 10: Performance lenta do WSL 2
+### Problema 11: Performance lenta do WSL 2
 
 **Soluções:**
 1. Certifique-se de que está usando WSL 2:
@@ -302,7 +373,7 @@ Erro: 0x80370102
 3. Desative o antivírus para a pasta do WSL:
    - Adicione exclusão para: `\\wsl$\`
 
-### Problema 11: Erro "The requested operation could not be completed"
+### Problema 12: Erro "The requested operation could not be completed"
 
 **Causa:** Serviços do WSL não estão rodando.
 
@@ -314,7 +385,7 @@ wsl --shutdown
 wsl
 ```
 
-### Problema 12: Distribuição corrompida
+### Problema 13: Distribuição corrompida
 
 **Solução:**
 1. Exporte dados importantes (se houver)
@@ -359,6 +430,16 @@ lsb_release -a
 Dentro do WSL:
 ```bash
 ls /mnt/c/
+```
+
+### 5. Verificar Sudo sem Senha (se configurado)
+
+Dentro do WSL:
+```bash
+# Testar sudo sem senha
+sudo whoami
+
+# Se retornar "root" sem pedir senha, está funcionando!
 ```
 
 ---
